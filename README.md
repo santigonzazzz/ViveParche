@@ -1,213 +1,320 @@
-# VibeMap AI Backend
+# ViveParche
 
-A production-ready FastAPI backend for event management with AI-powered chat capabilities.
+AI-Powered Event Discovery & Venue Management Platform
 
-## Features
+> A production-ready SaaS platform that helps users discover local events while enabling businesses to manage venues, sell tickets, automate customer interactions, and improve engagement through Artificial Intelligence.
 
-- 🎯 **CRUD Operations** for events and bookings
-- 🏛️ **Municipality Filtering** for location-based event searches
-- 🤖 **AI Chat Integration** using OpenAI GPT-4o-mini as a local expert
-- 🎫 **QR Code Generation** with unique hash for each booking
-- 📊 **Supabase Integration** for database operations
-- ✅ **Pydantic Validation** for all models
-- 🚀 **Async/Await** for high performance
+---
 
-## Tech Stack
+# 📸 Preview
 
-- **FastAPI** - Modern, fast web framework
-- **Supabase** - Backend database and authentication
-- **OpenAI** - GPT-4o-mini for AI chat
-- **Pydantic** - Data validation
-- **Uvicorn** - ASGI server
+<!-- Add screenshots here -->
 
-## Installation
+![Home](./screenshots/home.png)
 
-1. **Clone the repository**
-```bash
-cd eventos_ai
-```
+![Dashboard](./screenshots/dashboard.png)
 
-2. **Create a virtual environment**
-```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
+![AI Chat](./screenshots/chat.png)
 
-3. **Install dependencies**
-```bash
-pip install -r requirements.txt
-```
+---
 
-4. **Set up environment variables**
+# 🚀 Tech Stack
 
-Copy `.env.example` to `.env` and fill in your credentials:
-```bash
-cp .env.example .env
-```
+### Frontend
 
-Edit `.env`:
-```env
-SUPABASE_URL=your_supabase_project_url
-SUPABASE_KEY=your_supabase_anon_key
-OPENAI_API_KEY=your_openai_api_key
-```
+- React
+- TypeScript
+- Vite
 
-## Database Setup
+### Backend
 
-Create the following tables in your Supabase project:
+- Python
+- FastAPI
+- Pydantic
 
-### Events Table
-```sql
-CREATE TABLE events (
-  id BIGSERIAL PRIMARY KEY,
-  title VARCHAR(200) NOT NULL,
-  description TEXT NOT NULL,
-  municipality_id INTEGER NOT NULL,
-  date TIMESTAMP NOT NULL,
-  location VARCHAR(200) NOT NULL,
-  price NUMERIC NOT NULL,
-  category VARCHAR(100) NOT NULL,
-  created_at TIMESTAMP DEFAULT NOW(),
-  updated_at TIMESTAMP DEFAULT NOW()
-);
-```
+### Database & Authentication
 
-### Bookings Table
-```sql
-CREATE TABLE bookings (
-  id BIGSERIAL PRIMARY KEY,
-  event_id INTEGER NOT NULL REFERENCES events(id),
-  user_name VARCHAR(100) NOT NULL,
-  user_email VARCHAR(255) NOT NULL,
-  qr_hash VARCHAR(16) NOT NULL UNIQUE,
-  booking_date TIMESTAMP NOT NULL,
-  created_at TIMESTAMP DEFAULT NOW()
-);
-```
+- Supabase
+- PostgreSQL
+- JWT Authentication
 
-## Running the Server
+### AI
 
-**Development mode with auto-reload:**
-```bash
-uvicorn app.main:app --reload
-```
+- OpenAI
+- Groq
 
-**Production mode:**
-```bash
-uvicorn app.main:app --host 0.0.0.0 --port 8000
-```
+### External Services
 
-The API will be available at `http://localhost:8000`
+- Stripe
+- Twilio
+- SendGrid
 
-## API Documentation
+### Infrastructure
 
-Once the server is running, access the interactive API documentation:
+- Ubuntu VPS
+- Nginx
+- GitHub Actions
+- HTTPS (Let's Encrypt)
 
-- **Swagger UI**: http://localhost:8000/docs
-- **ReDoc**: http://localhost:8000/redoc
+---
 
-## API Endpoints
+# 💡 Why I Built This
 
-### Events
+ViveParche was created to simplify how people discover local events while providing businesses with a centralized platform to publish events, manage venues, sell tickets, and communicate with customers.
 
-- `POST /events` - Create a new event
-- `GET /events` - Get all events
-- `GET /events/{event_id}` - Get a specific event
-- `GET /events/municipality/{municipality_id}` - Filter events by municipality
-- `PUT /events/{event_id}` - Update an event
-- `DELETE /events/{event_id}` - Delete an event
+Instead of being just another event listing website, the goal was to build a complete SaaS platform where organizers could manage their business from a single dashboard.
 
-### Bookings
+Artificial Intelligence was integrated as part of the customer experience, allowing visitors to ask natural language questions about events without manually searching through event details.
 
-- `POST /bookings` - Create a new booking (auto-generates QR hash)
-- `GET /bookings` - Get all bookings
-- `GET /bookings/{booking_id}` - Get a specific booking
-- `PUT /bookings/{booking_id}` - Update a booking
-- `DELETE /bookings/{booking_id}` - Delete a booking
+---
 
-### AI Chat
+# ✨ Key Features
 
-- `POST /ai/chat` - Ask questions about an event
-  ```json
-  {
-    "event_id": 1,
-    "user_question": "What should I bring to this event?"
-  }
-  ```
+- Event discovery by municipality
+- Venue management dashboard
+- Business administration panel
+- Ticket management
+- AI-powered event assistant
+- User authentication
+- Role-based authorization (RBAC)
+- Subscription management
+- Payment integration
+- WhatsApp notifications
+- Email notifications
+- REST API
+- Responsive interface
 
-## Usage Examples
+---
 
-### Create an Event
-```bash
-curl -X POST "http://localhost:8000/events" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "title": "Summer Jazz Festival",
-    "description": "Annual jazz festival featuring local and international artists",
-    "municipality_id": 1,
-    "date": "2026-07-15T18:00:00",
-    "location": "Central Park Amphitheater",
-    "price": 25.00,
-    "category": "Music"
-  }'
-```
+# 🤖 AI Features
 
-### Create a Booking
-```bash
-curl -X POST "http://localhost:8000/bookings" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "event_id": 1,
-    "user_name": "John Doe",
-    "user_email": "john@example.com",
-    "booking_date": "2026-07-15T18:00:00"
-  }'
-```
+The platform includes an AI assistant capable of answering questions about specific events.
 
-### Ask AI About an Event
-```bash
-curl -X POST "http://localhost:8000/ai/chat" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "event_id": 1,
-    "user_question": "What time does the event start?"
-  }'
-```
+Instead of returning static information, the assistant receives the event context and generates contextual responses using OpenAI and Groq language models.
 
-## Project Structure
+Example questions include:
+
+- What time does the event start?
+- Is there a dress code?
+- Is parking available?
+- Can children attend?
+- What activities are included?
+
+This creates a significantly better user experience than traditional FAQ pages.
+
+---
+
+# 🏗 Architecture
 
 ```
-eventos_ai/
-├── app/
-│   ├── __init__.py
-│   ├── main.py              # FastAPI app entry point
-│   ├── config.py            # Environment configuration
-│   ├── models/              # Pydantic schemas
-│   │   ├── event.py
-│   │   ├── booking.py
-│   │   └── ai.py
-│   ├── services/            # Business logic
-│   │   ├── supabase_service.py
-│   │   └── openai_service.py
-│   ├── routers/             # API endpoints
-│   │   ├── events.py
-│   │   ├── bookings.py
-│   │   └── ai.py
-│   └── utils/               # Utilities
-│       └── qr_generator.py
-├── requirements.txt
-├── .env.example
+                         Users
+                           │
+                           ▼
+                  React Frontend
+                           │
+                           ▼
+                         Nginx
+                           │
+                           ▼
+                    FastAPI Backend
+                           │
+        ┌──────────────────┼──────────────────┐
+        ▼                  ▼                  ▼
+   Supabase          OpenAI / Groq        Stripe
+        │                  │                  │
+        ▼                  ▼                  ▼
+ PostgreSQL          AI Assistant        Payments
+
+               Twilio • SendGrid
+```
+
+---
+
+# ⚙️ How It Works
+
+A typical request follows this flow:
+
+```
+User
+
+↓
+
+React Frontend
+
+↓
+
+FastAPI REST API
+
+↓
+
+Authentication (JWT)
+
+↓
+
+Business Logic
+
+↓
+
+Supabase (PostgreSQL)
+
+↓
+
+External Services (AI, Payments, Notifications)
+
+↓
+
+Response
+```
+
+Every request is validated using Pydantic models before reaching the business logic layer.
+
+---
+
+# 🔐 Security
+
+Several security mechanisms were implemented across the platform.
+
+- JWT Authentication
+- Role-Based Access Control (RBAC)
+- Request validation with Pydantic
+- CORS protection
+- Rate Limiting
+- Security HTTP Headers
+- Environment Variables
+- HTTPS encryption
+
+---
+
+# 📂 Project Structure
+
+```
+/
+├── frontend/
+│   ├── src/
+│   ├── components/
+│   ├── pages/
+│   └── services/
+│
+├── backend/
+│   ├── app/
+│   ├── routers/
+│   ├── services/
+│   ├── models/
+│   ├── middleware/
+│   ├── utils/
+│   └── dependencies.py
+│
 └── README.md
 ```
 
-## Code Standards
+---
 
-- **PEP8** compliant
-- **Type hints** throughout
-- **Async/await** for all I/O operations
-- **HTTPException** for error handling
-- **Comprehensive docstrings**
+# ⚡ Deployment
 
-## License
+The platform was deployed on an Ubuntu VPS.
 
-MIT License
+Deployment was automated using GitHub Actions.
+
+The deployment pipeline performs:
+
+- Frontend build
+- Secure file synchronization
+- Backend restart
+- HTTPS support
+- Automatic rollback
+- System monitoring scripts
+
+---
+
+# 🛠 Getting Started
+
+## Backend
+
+```bash
+cd backend
+
+pip install -r requirements.txt
+
+uvicorn app.main:app --reload
+```
+
+---
+
+## Frontend
+
+```bash
+cd frontend
+
+npm install
+
+npm run dev
+```
+
+---
+
+## Environment Variables
+
+```env
+SUPABASE_URL=
+
+SUPABASE_KEY=
+
+OPENAI_API_KEY=
+
+GROQ_API_KEY=
+
+STRIPE_SECRET_KEY=
+
+TWILIO_ACCOUNT_SID=
+
+SENDGRID_API_KEY=
+```
+
+---
+
+# 🎯 Engineering Highlights
+
+This project demonstrates experience with:
+
+- Full-Stack Development
+- SaaS Architecture
+- REST API Design
+- AI Integration
+- Authentication & Authorization
+- PostgreSQL
+- Third-Party API Integrations
+- Cloud Deployment
+- Production Infrastructure
+- CI/CD Pipelines
+- Software Architecture
+- Backend Engineering
+
+---
+
+# 📚 Lessons Learned
+
+Building ViveParche taught me several important engineering lessons beyond writing code.
+
+The biggest challenge wasn't developing the platform itself, but understanding the importance of validating a product before investing significant development effort.
+
+From a technical perspective, the project also highlighted opportunities for future improvements, including containerization with Docker, zero-downtime deployments, and moving background jobs to dedicated workers instead of running them inside the web server.
+
+Those lessons have significantly influenced how I design software today.
+
+---
+
+# 🔮 Future Improvements
+
+- Dockerized infrastructure
+- Background workers using Celery + Redis
+- Zero-downtime deployments
+- Event recommendation engine
+- Advanced analytics dashboard
+- Multi-language support
+- Mobile application
+
+---
+
+# 📄 License
+
+This project was developed as a portfolio project demonstrating full-stack software engineering, backend architecture, AI integration, and cloud deployment.
