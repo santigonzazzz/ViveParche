@@ -1,0 +1,90 @@
+name: 🚀 Deploy Frontend + Backend
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frontend/**'
+      - 'app/**'
+      - 'scripts/**'
+      - 'requirements.txt'
+      - '.github/workflows/deploy.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 🛠️ Instalar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: './frontend/package-lock.json'
+
+      - name: 📦 Instalar dependencias frontend
+        run: |
+          cd frontend
+          npm install
+
+      - name: 🏗️ Build frontend
+        run: |
+          cd frontend
+          npm run build
+
+      - name: 📤 Subir artefacto de build
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
+          path: frontend/dist/
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 📥 Descargar artefacto de build
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-dist
+          path: frontend/dist/
+
+      - name: 🔑 Configurar SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
+
+      - name: 📡 Sincronizar Todo el Proyecto Seguro
+        run: |
+          rsync -avz --delete \
+            -e "ssh -i ~/.ssh/deploy_key" \
+            --exclude='frontend/node_modules' \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='.venv' \
+            --exclude='__pycache__' \
+            --exclude='*.log' \
+            --exclude='.env' \
+            ./ \
+            ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:${{ secrets.VPS_DEPLOY_PATH }}/
+          echo "✅ Archivos sincronizados exitosamente"
+
+      - name: 🚀 Ejecutar script deploy-frontend
+        run: |
+          ssh -i ~/.ssh/deploy_key \
+            ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} \
+            "cd ${{ secrets.VPS_DEPLOY_PATH }} && bash scripts/deploy-frontend.sh --skip-build"
+
+      - name: 🚀 Reiniciar Backend
+        run: |
+          ssh -i ~/.ssh/deploy_key \
+            ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} \
+            "cd ${{ secrets.VPS_DEPLOY_PATH }} && \
+             . .venv/bin/activate && \
+             ( [ -f requirements.txt ] && pip install -r requirements.txt || true ) && \
+             systemctl restart viveparche-backend"
+          echo "✅ Backend reiniciado"

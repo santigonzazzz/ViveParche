@@ -1,0 +1,101 @@
+# --- Environment & Sensitive Info ---
+.env
+.env.local
+.venv/
+venv/
+env/
+ENV/
+*.env.py
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# --- Node / Frontend ---
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+frontend/.nx/
+node_modules/
+
+# --- Testing & Coverage ---
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+.cache/
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+
+# --- IDEs & Editors ---
+.vscode/
+.idea/
+*.swp
+*.swo
+.project
+.pydevproject
+.settings/
+
+# --- OS Specific ---
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Project Specific (Temporary/Logs/Scripts) ---
+# Ignore maintenance/check scripts not required for core app logic
+check_*.py
+debug_*.py
+test_*.py
+verify_*.py
+inspect_schema.py
+get_*.py
+find_nulls.py
+run_chat_migration.py
+backfill_users.py
+seed_vibes.py
+
+# Ignore logs and temporary output
+*.txt
+*.log
+*.json
+!requirements.txt
+!requirements*.txt
+!.env.example
+!package.json
+!package-lock.json
+!tsconfig.json
+!tsconfig.*.json
+
+# --- AI Assistants ---
+.antigravity/
+.gemini/
+.env.testing
+frontend/.env.testing
+.env.production
+
+# --- Local Scripts & Scratch ---
+scratch/
+scripts/wipe_db.py
+scripts/seed_visual_test.py
